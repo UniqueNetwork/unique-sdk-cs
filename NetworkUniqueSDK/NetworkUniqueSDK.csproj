@@ -6,25 +6,11 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <AssemblyName>Network.Unique.SDK</AssemblyName>
+        <LangVersion>11</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Network\Unique\OpenAPITools" />
-      <Folder Include="Network\Unique\Service\Impl\Balance" />
-      <Folder Include="Network\Unique\Service\Impl\Collection" />
-      <Folder Include="Network\Unique\Service\Impl\Erc721" />
-      <Folder Include="Network\Unique\Service\Impl\Evm" />
-      <Folder Include="Network\Unique\Service\Impl\Fungible" />
-      <Folder Include="Network\Unique\Service\Impl\Token" />
-      <Folder Include="Network\Unique\Signer" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Include="JsonSubTypes" Version="1.9.0" />
-      <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
-      <PackageReference Include="Polly" Version="7.2.3" />
-      <PackageReference Include="RestSharp" Version="108.0.3" />
-      <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+      <Folder Include="Signer" />
     </ItemGroup>
 
 </Project>

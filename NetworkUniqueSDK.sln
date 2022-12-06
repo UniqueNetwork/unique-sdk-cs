@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetworkUniqueSDK", "NetworkUniqueSDK\NetworkUniqueSDK.csproj", "{6B9613C2-E955-4CDB-97E9-472C6938219B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetworkUniqueAPI", "NetworkUniqueAPI\NetworkUniqueAPI.csproj", "{D58EB0B2-0A24-4D0B-A01D-B29F67733D1A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{6B9613C2-E955-4CDB-97E9-472C6938219B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6B9613C2-E955-4CDB-97E9-472C6938219B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6B9613C2-E955-4CDB-97E9-472C6938219B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D58EB0B2-0A24-4D0B-A01D-B29F67733D1A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D58EB0B2-0A24-4D0B-A01D-B29F67733D1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D58EB0B2-0A24-4D0B-A01D-B29F67733D1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D58EB0B2-0A24-4D0B-A01D-B29F67733D1A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
