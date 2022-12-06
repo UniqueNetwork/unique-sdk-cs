@@ -10,7 +10,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Signer" />
+      <ProjectReference Include="..\NetworkUniqueAPI\NetworkUniqueAPI.csproj" />
     </ItemGroup>
 
 </Project>
