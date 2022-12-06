@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <RootNamespace>Network.Unique.SDK</RootNamespace>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AssemblyName>Network.Unique.SDK</AssemblyName>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Folder Include="Network\Unique\OpenAPITools" />
+      <Folder Include="Network\Unique\Signer" />
+    </ItemGroup>
+
+</Project>
