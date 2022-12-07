@@ -153,7 +153,7 @@ namespace Network.Unique.API.Model
         /// the InvalidClassException will be thrown
         /// </summary>
         /// <returns>An instance of List&lt;DecodedAttributeDtoRawValueOneOf1&gt;</returns>
-        public List<DecodedAttributeDtoRawValueOneOf1> GetList()
+        public List<DecodedAttributeDtoRawValueOneOf1> GetList1()
         {
             return (List<DecodedAttributeDtoRawValueOneOf1>)this.ActualInstance;
         }

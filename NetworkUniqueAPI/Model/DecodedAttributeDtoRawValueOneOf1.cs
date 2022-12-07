@@ -40,16 +40,16 @@ namespace Network.Unique.API.Model
         /// Initializes a new instance of the <see cref="DecodedAttributeDtoRawValueOneOf1" /> class.
         /// </summary>
         /// <param name=""> (required).</param>
-        public DecodedAttributeDtoRawValueOneOf1(decimal  = default(decimal))
+        public DecodedAttributeDtoRawValueOneOf1(decimal args = default(decimal))
         {
-            this._ = ;
+            this._args = args;
         }
 
         /// <summary>
         /// Gets or Sets _
         /// </summary>
         [DataMember(Name = "_", IsRequired = true, EmitDefaultValue = true)]
-        public decimal _ { get; set; }
+        public decimal _args { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -59,7 +59,7 @@ namespace Network.Unique.API.Model
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("class DecodedAttributeDtoRawValueOneOf1 {\n");
-            sb.Append("  _: ").Append(_).Append("\n");
+            sb.Append("  _: ").Append(_args).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -96,8 +96,8 @@ namespace Network.Unique.API.Model
             }
             return 
                 (
-                    this._ == input._ ||
-                    this._.Equals(input._)
+                    this._args == input._args ||
+                    this._args.Equals(input._args)
                 );
         }
 
@@ -110,7 +110,7 @@ namespace Network.Unique.API.Model
             unchecked // Overflow is fine, just wrap
             {
                 int hashCode = 41;
-                hashCode = (hashCode * 59) + this._.GetHashCode();
+                hashCode = (hashCode * 59) + this._args.GetHashCode();
                 return hashCode;
             }
         }

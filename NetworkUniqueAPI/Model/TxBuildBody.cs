@@ -43,7 +43,7 @@ namespace Network.Unique.API.Model
         /// <param name="section">section (required).</param>
         /// <param name="method">method (required).</param>
         /// <param name="args">args (required).</param>
-        public TxBuildBody(string address = default(string), string section = default(string), string method = default(string), List<ArrayNumberRecordstringAny> args = default(List<ArrayNumberRecordstringAny>))
+        public TxBuildBody(string address = default(string), string section = default(string), string method = default(string), List<object> args = default(List<Object>))
         {
             // to ensure "address" is required (not null)
             if (address == null)
@@ -94,7 +94,7 @@ namespace Network.Unique.API.Model
         /// Gets or Sets Args
         /// </summary>
         [DataMember(Name = "args", IsRequired = true, EmitDefaultValue = true)]
-        public List<ArrayNumberRecordstringAny> Args { get; set; }
+        public List<object> Args { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object

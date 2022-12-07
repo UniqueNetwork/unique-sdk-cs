@@ -35,16 +35,16 @@ namespace Network.Unique.API.Model
         /// Initializes a new instance of the <see cref="DecodedAttributeDtoName" /> class.
         /// </summary>
         /// <param name="">.</param>
-        public DecodedAttributeDtoName(string  = default(string)) : base()
+        public DecodedAttributeDtoName(string args = default(string)) : base()
         {
-            this._ = ;
+            this._args = args;
         }
 
         /// <summary>
         /// Gets or Sets _
         /// </summary>
         [DataMember(Name = "_", EmitDefaultValue = false)]
-        public string _ { get; set; }
+        public string _args { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -55,7 +55,7 @@ namespace Network.Unique.API.Model
             StringBuilder sb = new StringBuilder();
             sb.Append("class DecodedAttributeDtoName {\n");
             sb.Append("  ").Append(base.ToString().Replace("\n", "\n  ")).Append("\n");
-            sb.Append("  _: ").Append(_).Append("\n");
+            sb.Append("  _: ").Append(_args).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -92,9 +92,9 @@ namespace Network.Unique.API.Model
             }
             return base.Equals(input) && 
                 (
-                    this._ == input._ ||
-                    (this._ != null &&
-                    this._.Equals(input._))
+                    this._args == input._args ||
+                    (this._args != null &&
+                    this._args.Equals(input._args))
                 );
         }
 
@@ -107,9 +107,9 @@ namespace Network.Unique.API.Model
             unchecked // Overflow is fine, just wrap
             {
                 int hashCode = base.GetHashCode();
-                if (this._ != null)
+                if (this._args != null)
                 {
-                    hashCode = (hashCode * 59) + this._.GetHashCode();
+                    hashCode = (hashCode * 59) + this._args.GetHashCode();
                 }
                 return hashCode;
             }
