@@ -1,13 +1,6 @@
-use std::{mem::transmute, ptr::null_mut, result, str::Utf8Error, mem::drop};
+use std::{mem::transmute, ptr::null_mut, result, str::Utf8Error, ffi::{CStr, c_char, c_int, c_uchar}};
 
-use jni::{
-    errors::Error as JniError,
-    objects::{JClass, JString},
-    strings::JavaStr,
-    sys::{jbyteArray, jlong},
-    JNIEnv,
-};
-use sp_core::{crypto::SecretStringError, Pair};
+use sp_core::{crypto::SecretStringError, Pair, Encode};
 
 type Result<T, E = Error> = result::Result<T, E>;
 
@@ -19,86 +12,55 @@ pub enum Error {
     InvalidUtf8(&'static str, Utf8Error),
     #[error("secret string: {0:?}")]
     SecretString(SecretStringError),
-    #[error("jni error: {0}")]
-    Jni(#[from] JniError),
 }
-
 impl From<SecretStringError> for Error {
     fn from(value: SecretStringError) -> Self {
         Self::SecretString(value)
     }
 }
 
-impl Error {
-    fn into_env(self, env: JNIEnv) {
-        let _ = match self {
-            Error::InvalidArgument(s) => env.throw_new("java/lang/InvalidArgumentException", s),
-            Error::SecretString(s) => env.throw_new(
-                "network/unique/signer/exception/SecretStringException",
-                format!("{s:?}"),
-            ),
-            Error::Jni(e) => env.throw_new("java/lang/RuntimeException", e.to_string()),
-            Error::InvalidUtf8(location, message) => env.throw_new(
-                "network/unique/signer/exception/InvalidUtf8Exception",
-                format!("{location}: {message}"),
-            ),
-        };
-    }
+
+unsafe fn get_jpair(signer: i64) -> &'static &'static dyn JPair {
+    assert!(signer != 0, "pair is already freed");
+    transmute(signer as usize)
 }
 
-pub struct CSharpPair {
-    pair: Pair
-}
-
-impl<'a> CSharpPair {
-    fn to_ptr(self) -> *mut CSharpPair {
-        unsafe { transmute(Box::new(self)) }
-    }
-
-    fn from_ptr(ptr: *mut CSharpPair) -> &'a mut CSharpPair {
-        unsafe { &mut *ptr }
-    }
-
-    fn sign(ptr: *mut *mut CSharpPair, input: &mut [i8]) -> &mut [i8] {
-        let pair: Box<CSharpPair> = unsafe { transmute(*ptr) };
-
-        pair.pair.sign(i2u(input.as_slice()))
-    }
-    
-    fn free(ptr: *mut *mut CSharpPair) {
-        let pair: Box<CSharpPair> = unsafe { transmute(*ptr) };
-        
-        drop(pair);
-    }
-}
-
-fn i2u(v: &[i8]) -> &[u8] {
-    // Safety: &[u8] has the same layout as &[i8]
-    unsafe { transmute(v) }
-}
-
+// fn i2u(v: &[i8]) -> &[u8] {
+//     // Safety: &[u8] has the same layout as &[i8]
+//     unsafe { transmute(v) }
+// }
 fn u2i(v: &[u8]) -> &[i8] {
     // Safety: &[u8] has the same layout as &[i8]
     unsafe { transmute(v) }
 }
 
 trait JPair {
-    fn sign(&self, env: &JNIEnv, input: &[u8]) -> Result<jbyteArray>;
+    fn sign(&self, input: &[u8]) -> Result<*mut i8>;
 }
-
 impl<T: Pair> JPair for T {
-    fn sign(&self, env: &JNIEnv, input: &[u8]) -> Result<jbyteArray> {
+    fn sign(&self, input: &[u8]) -> Result<*mut i8> {
         let signature = self.sign(input);
         let signature = signature.as_ref();
-        let array = env.new_byte_array(signature.len() as i32)?;
-        env.set_byte_array_region(array, 0, u2i(signature))?;
-        Ok(array)
+        let mut new_vec = u2i(signature).to_vec();
+        // let array = env.new_byte_array(signature.len() as i32)?;
+        // env.set_byte_array_region(array, 0, u2i(signature))?;
+        // Ok(array)
+        return Ok(new_vec.as_mut_ptr());
     }
 }
 
-fn init_suri<P: Pair>(suri: String, password: String) -> Result<CSharpPair, String> {
+fn init_suri<P: Pair>(suri: &str, password: Option<&str>) -> Result<Box<dyn JPair>> {
     let pair = P::from_string(suri, password)?;
-    Ok(CSharpPair { pair })
+    Ok(Box::new(pair))
+}
+
+fn sign(signer: &dyn JPair, input: *mut u8, input_length: i32) -> Result<*mut i8> {
+    let buf: &mut [u8];
+    unsafe {
+        buf = core::slice::from_raw_parts_mut(input, input_length as usize);
+    }
+
+    signer.sign(buf)
 }
 
 #[repr(u32)]
@@ -111,60 +73,63 @@ pub enum CryptoScheme {
 
 #[no_mangle]
 pub extern "C" fn csharp_init_suri(
-    ptr: *mut *mut Baton,
     pair_type: CryptoScheme,
     suri_ptr: *const c_char,
     password_ptr: *const c_char,
-) -> bool {
-    let suri = unsafe { CStr::from_ptr(suri_ptr) };
-    let password = unsafe { CStr::from_ptr(password_ptr) };
+) -> i64 {
+    let suri = unsafe {
+        assert!(!suri_ptr.is_null());
+
+        CStr::from_ptr(suri_ptr)
+    }.to_str().unwrap();
+    let password;
+    if !password_ptr.is_null() {
+        unsafe {
+            password = Some(CStr::from_ptr(password_ptr).to_str().unwrap());
+        }
+    } else {
+        password = None;
+    };
+
     let result = match pair_type {
         CryptoScheme::Ed25519 => init_suri::<sp_core::ed25519::Pair>(suri, password),
         CryptoScheme::Sr25519 => init_suri::<sp_core::sr25519::Pair>(suri, password),
         CryptoScheme::EcDSA => init_suri::<sp_core::ecdsa::Pair>(suri, password),
     };
-    match result {
-        Ok(pair) => {
-            unsafe {
-                *ptr = pair.to_ptr();
-            }
-        }
-        Err(message) => {
-            unsafe {
-                *ptr = ptr::null();
-            }
-
-            false
+    let signer = match result {
+        Ok(v) => v,
+        Err(_e) => {
+            return -1;
         }
     };
+    Box::into_raw(Box::new(signer)) as usize as i64
 }
 
+/// # Safety
+/// JPair should be obtained from jPairInit* methods, and passed to this method only once
 #[no_mangle]
-pub extern "C" fn csharp_free(
-    ptr: *mut *mut CSharpPair,
+pub unsafe extern "C" fn csharp_pair_free(
+    jpair: i64,
 ) {
-    if !ptr.is_null() && unsafe { !(*ptr).is_null() } {
-        CSharpPair::free(ptr);
-
-        unsafe {
-            *ptr = ptr::null_mut();
-        }
-    }
+    let _ = <Box<Box<dyn JPair>>>::from_raw(jpair as usize as *mut _);
 }
 
+/// # Safety
+/// JPair should be obtained from jPairInit* methods
 #[no_mangle]
-pub extern "C" fn csharp_sign(
-    ptr: *mut *mut CSharpPair,
-    data_ptr: *mut i8,
-) -> *mut i8 {
-    let data: &mut [i8] = unsafe { 
-        std::slice::from_raw_parts_mut(data_ptr, length) 
-    };
-    
-    if !ptr.is_null() && unsafe { !(*ptr).is_null() } {
-        let signature = CSharpPair::sign(ptr, data);
-        unsafe {
-            return transmute(signature);
+pub unsafe extern "C" fn csharp_pair_sign(
+    jpair: i64,
+    data: *mut u8,
+    data_length: i32,
+    result: *mut *mut c_char
+) {
+    match sign(unsafe { *get_jpair(jpair) }, data, data_length) {
+        Ok(v) => {
+            *result = v;
+            std::mem::forget(v);
+        },
+        Err(_e) => {
+            *result = null_mut()
         }
     }
 }

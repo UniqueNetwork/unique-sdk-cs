@@ -1,33 +1,39 @@
 ﻿using System.Runtime.InteropServices;
-using System.Text;
 
 namespace Network.Unique.SDK.Signer;
 
-public class PairFFI
+public class Pair
 {
-    private static IntPtr _pair;
+    private const string NativeLib = "signer";
+
+    [DllImport(NativeLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "csharp_init_suri")]
+    private static extern IntPtr csharp_init_suri(int ordinalCryptoScheme, string suri, string? password);
     
-    [DllImport("signer")]
-    private static extern bool csharp_init_suri(out IntPtr pair, int ordinalCryptoScheme, byte[] suriBytes, byte[] passwordBytes);
-    
-    public static bool InitSuri(CryptoScheme cryptoScheme, string suri, string password)
+    public static IntPtr InitSuri(CryptoScheme cryptoScheme, string suri, string? password)
     {
-        return csharp_init_suri(out _pair, (int) cryptoScheme, Encoding.UTF8.GetBytes(suri), Encoding.UTF8.GetBytes(password));
+        return csharp_init_suri(
+            (int)cryptoScheme,
+            suri,
+            password
+        );
     }
-    
-    [DllImport("signer")]
-    private static extern byte[] csharp_sign(out IntPtr pair, byte[] payload);
-    
-    public static byte[] Sign(byte[] payload)
+
+    [DllImport(NativeLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "csharp_pair_sign")]
+    private static extern void csharp_sign(IntPtr pair, byte[] payload, int payloadLength, out IntPtr resultPtr);
+
+    public static byte[] Sign(long pairPointer, byte[] payload)
     {
-        return csharp_sign(out _pair, payload);
+        csharp_sign(new IntPtr(pairPointer), payload, payload.Length, out IntPtr resultPtr);
+        byte[] results = new byte[64];
+        Marshal.Copy(resultPtr, results, 0, results.Length);
+        return results;
     }
-    
-    [DllImport("signer")]
-    private static extern void csharp_free(out IntPtr pair);
-    
-    public static void Free()
+
+    [DllImport(NativeLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "csharp_pair_free")]
+    private static extern void csharp_free(IntPtr pair);
+
+    public static void Free(long pairPointer)
     {
-        csharp_free(out _pair);
+        csharp_free(new IntPtr(pairPointer));
     }
 }
