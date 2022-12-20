@@ -7,6 +7,8 @@
         <Nullable>enable</Nullable>
         <AssemblyName>Network.Unique.SDK</AssemblyName>
         <LangVersion>10</LangVersion>
+        <Title>Network Unique SDK C#</Title>
+        <PackageProjectUrl>https://github.com/UniqueNetwork/unique-sdk-cs</PackageProjectUrl>
     </PropertyGroup>
 
     <ItemGroup>
