@@ -80,6 +80,16 @@ namespace Network.Unique.API.Model
             this.SchemaType= "oneOf";
             this.ActualInstance = actualInstance ?? throw new ArgumentException("Invalid instance found. Must not be null.");
         }
+        
+        /// <summary>
+        /// Get the actual instance of `FeeBodyResponse`. If the actual instance is not `FeeBodyResponse`,
+        /// the InvalidClassException will be thrown
+        /// </summary>
+        /// <returns>An instance of FeeBodyResponse</returns>
+        public FeeBodyResponse GetFeeBodyResponse()
+        {
+            return (FeeBodyResponse)this.ActualInstance;
+        }
 
 
         private Object _actualInstance;
