@@ -1,24 +1,20 @@
 ﻿using Network.Unique.API.Api;
 using Network.Unique.API.Model;
-using Network.Unique.SDK.Signer;
 
 namespace Network.Unique.SDK.Service.Impl.Collection;
 
 public class NestTokenTokenMutationServiceImpl : MutationService<NestTokenBody>
 {
-    private SignerWrapper _signerWrapper;
-    private TokensApi _api;
+    private readonly TokensApi _api;
 
-    public NestTokenTokenMutationServiceImpl(SignerWrapper signerWrapper, TokensApi api)
+    public NestTokenTokenMutationServiceImpl(TokensApi api)
     {
-        this._signerWrapper = signerWrapper;
-        this._api = api;
+        _api = api;
     }
 
-    public NestTokenTokenMutationServiceImpl(SignerWrapper signerWrapper, string basePath)
+    public NestTokenTokenMutationServiceImpl(string basePath)
     {
-        this._signerWrapper = signerWrapper;
-        this._api = new TokensApi(basePath);
+        _api = new TokensApi(basePath);
     }
 
     public override UnsignedTxPayloadResponse Build(NestTokenBody args)
@@ -63,7 +59,7 @@ public class NestTokenTokenMutationServiceImpl : MutationService<NestTokenBody>
 
     public override SubmitTxBody Sign(UnsignedTxPayloadResponse args)
     {
-        var signature = _signerWrapper.Sign(args.SignerPayloadRaw.Data);
+        var signature = UniqueSdk.SignerWrapper.Sign(args.SignerPayloadRaw.Data);
         return new SubmitTxBody(args.SignerPayloadJSON, signature);
     }
 

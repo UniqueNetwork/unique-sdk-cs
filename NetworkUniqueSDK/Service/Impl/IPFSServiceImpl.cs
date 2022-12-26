@@ -5,14 +5,13 @@ namespace Network.Unique.SDK.Service.Impl;
 
 public class IPFSServiceImpl : IIPFSService
 {
-    
-    private IpfsApi _api;
+    private readonly IpfsApi _api;
 
-    public IPFSServiceImpl(String basePath)
+    public IPFSServiceImpl(string basePath)
     {
-        this._api = new IpfsApi(basePath);
+        _api = new IpfsApi(basePath);
     }
-    
+
     public IpfsUploadResponse UploadFile(Stream file)
     {
         return _api.IpfsControllerUploadFile(file);

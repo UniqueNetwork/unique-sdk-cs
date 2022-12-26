@@ -1,36 +1,34 @@
 ﻿using Network.Unique.API.Api;
 using Network.Unique.API.Model;
 using Network.Unique.SDK.Service.Impl.Collection;
-using Network.Unique.SDK.Signer;
 
 namespace Network.Unique.SDK.Service.Impl;
 
 public class TokenServiceImpl : ITokenService
 {
-    
-    private TokensApi _api;
-    private MutationService<ApproveTokenBody> _approveToken;
-    private MutationService<BurnTokenBody> _burnToken;
-    private MutationService<CreateMultipleTokensBody> _createMultipleTokens;
-    private MutationService<CreateTokenBody> _createToken;
-    private MutationService<DeleteTokenPropertiesBody> _deleteTokenProperties;
-    private MutationService<NestTokenBody> _nestToken;
-    private MutationService<SetTokenPropertiesBody> _setTokenProperties;
-    private MutationService<TransferTokenBody> _transferToken;
-    private MutationService<UnnestTokenBody> _unnestToken;
+    private readonly TokensApi _api;
+    private readonly MutationService<ApproveTokenBody> _approveToken;
+    private readonly MutationService<BurnTokenBody> _burnToken;
+    private readonly MutationService<CreateMultipleTokensBody> _createMultipleTokens;
+    private readonly MutationService<CreateTokenBody> _createToken;
+    private readonly MutationService<DeleteTokenPropertiesBody> _deleteTokenProperties;
+    private readonly MutationService<NestTokenBody> _nestToken;
+    private readonly MutationService<SetTokenPropertiesBody> _setTokenProperties;
+    private readonly MutationService<TransferTokenBody> _transferToken;
+    private readonly MutationService<UnnestTokenBody> _unnestToken;
 
-    public TokenServiceImpl(SignerWrapper signerWrapper, String basePath)
+    public TokenServiceImpl(string basePath)
     {
-        this._api = new TokensApi(basePath);
-        this._approveToken = new ApproveTokenMutationServiceImpl(signerWrapper, _api);
-        this._burnToken = new BurnTokenTokenMutationServiceImpl(signerWrapper, _api);
-        this._createMultipleTokens = new CreateMultipleTokensMutationTokenMutationServiceImpl(signerWrapper, _api);
-        this._createToken = new CreateNewTokenMutationTokenMutationServiceImpl(signerWrapper, _api);
-        this._deleteTokenProperties = new DeleteTokenPropertiesTokenMutationServiceImpl(signerWrapper, _api);
-        this._nestToken = new NestTokenTokenMutationServiceImpl(signerWrapper, _api);
-        this._setTokenProperties = new SetTokenPropertiesTokenMutationServiceImpl(signerWrapper, _api);
-        this._transferToken = new TransferTokenTokenMutationServiceImpl(signerWrapper, _api);
-        this._unnestToken = new UnnestTokenTokenMutationServiceImpl(signerWrapper, _api);
+        _api = new TokensApi(basePath);
+        _approveToken = new ApproveTokenMutationServiceImpl(_api);
+        _burnToken = new BurnTokenTokenMutationServiceImpl(_api);
+        _createMultipleTokens = new CreateMultipleTokensMutationTokenMutationServiceImpl(_api);
+        _createToken = new CreateNewTokenMutationTokenMutationServiceImpl(_api);
+        _deleteTokenProperties = new DeleteTokenPropertiesTokenMutationServiceImpl(_api);
+        _nestToken = new NestTokenTokenMutationServiceImpl(_api);
+        _setTokenProperties = new SetTokenPropertiesTokenMutationServiceImpl(_api);
+        _transferToken = new TransferTokenTokenMutationServiceImpl(_api);
+        _unnestToken = new UnnestTokenTokenMutationServiceImpl(_api);
     }
 
     public TokenByIdResponse GetToken(decimal tokenId, decimal collectionId, string at)
@@ -83,7 +81,8 @@ public class TokenServiceImpl : ITokenService
         return _api.NewTokenControllerGetTokensExists(collectionId, tokenId, at);
     }
 
-    public AllowanceResultResponse TokenIsAllowed(decimal tokenId, decimal collectionId, string from, string to, string at)
+    public AllowanceResultResponse TokenIsAllowed(decimal tokenId, decimal collectionId, string from, string to,
+        string at)
     {
         return _api.NewTokenControllerAllowance(collectionId, tokenId, from, to, at);
     }

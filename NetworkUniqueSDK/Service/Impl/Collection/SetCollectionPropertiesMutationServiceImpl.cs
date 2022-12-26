@@ -1,24 +1,20 @@
 ﻿using Network.Unique.API.Api;
 using Network.Unique.API.Model;
-using Network.Unique.SDK.Signer;
 
 namespace Network.Unique.SDK.Service.Impl.Collection;
 
 public class SetCollectionPropertiesMutationServiceImpl : MutationService<SetCollectionPropertiesBody>
 {
-    private SignerWrapper _signerWrapper;
-    private CollectionsApi _api;
+    private readonly CollectionsApi _api;
 
-    public SetCollectionPropertiesMutationServiceImpl(SignerWrapper signerWrapper, CollectionsApi api)
+    public SetCollectionPropertiesMutationServiceImpl(CollectionsApi api)
     {
-        this._signerWrapper = signerWrapper;
-        this._api = api;
+        _api = api;
     }
 
-    public SetCollectionPropertiesMutationServiceImpl(SignerWrapper signerWrapper, string basePath)
+    public SetCollectionPropertiesMutationServiceImpl(string basePath)
     {
-        this._signerWrapper = signerWrapper;
-        this._api = new CollectionsApi(basePath);
+        _api = new CollectionsApi(basePath);
     }
 
     public override UnsignedTxPayloadResponse Build(SetCollectionPropertiesBody args)
@@ -63,7 +59,7 @@ public class SetCollectionPropertiesMutationServiceImpl : MutationService<SetCol
 
     public override SubmitTxBody Sign(UnsignedTxPayloadResponse args)
     {
-        var signature = _signerWrapper.Sign(args.SignerPayloadRaw.Data);
+        var signature = UniqueSdk.SignerWrapper.Sign(args.SignerPayloadRaw.Data);
         return new SubmitTxBody(args.SignerPayloadJSON, signature);
     }
 

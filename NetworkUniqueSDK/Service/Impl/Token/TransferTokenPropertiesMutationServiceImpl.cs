@@ -1,24 +1,20 @@
 ﻿using Network.Unique.API.Api;
 using Network.Unique.API.Model;
-using Network.Unique.SDK.Signer;
 
 namespace Network.Unique.SDK.Service.Impl.Collection;
 
 public class TransferTokenTokenMutationServiceImpl : MutationService<TransferTokenBody>
 {
-    private SignerWrapper _signerWrapper;
-    private TokensApi _api;
+    private readonly TokensApi _api;
 
-    public TransferTokenTokenMutationServiceImpl(SignerWrapper signerWrapper, TokensApi api)
+    public TransferTokenTokenMutationServiceImpl(TokensApi api)
     {
-        this._signerWrapper = signerWrapper;
-        this._api = api;
+        _api = api;
     }
 
-    public TransferTokenTokenMutationServiceImpl(SignerWrapper signerWrapper, string basePath)
+    public TransferTokenTokenMutationServiceImpl(string basePath)
     {
-        this._signerWrapper = signerWrapper;
-        this._api = new TokensApi(basePath);
+        _api = new TokensApi(basePath);
     }
 
     public override UnsignedTxPayloadResponse Build(TransferTokenBody args)
@@ -63,7 +59,7 @@ public class TransferTokenTokenMutationServiceImpl : MutationService<TransferTok
 
     public override SubmitTxBody Sign(UnsignedTxPayloadResponse args)
     {
-        var signature = _signerWrapper.Sign(args.SignerPayloadRaw.Data);
+        var signature = UniqueSdk.SignerWrapper.Sign(args.SignerPayloadRaw.Data);
         return new SubmitTxBody(args.SignerPayloadJSON, signature);
     }
 

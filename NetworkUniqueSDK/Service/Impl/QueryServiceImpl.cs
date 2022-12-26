@@ -5,14 +5,13 @@ namespace Network.Unique.SDK.Service.Impl;
 
 public class QueryServiceImpl : IQueryService
 {
-    
-    private QueryApi _api;
+    private readonly QueryApi _api;
 
-    public QueryServiceImpl(String basePath)
+    public QueryServiceImpl(string basePath)
     {
-        this._api = new QueryApi(basePath);
+        _api = new QueryApi(basePath);
     }
-    
+
     public object GetPolkadotParameter(string endpoint, string module, string method)
     {
         return _api.QueryControllerGet(endpoint, module, method);

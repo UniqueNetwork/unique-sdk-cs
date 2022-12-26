@@ -5,14 +5,13 @@ namespace Network.Unique.SDK.Service.Impl;
 
 public class CommonServiceImpl : ICommonService
 {
-    
-    private CommonApi _api;
+    private readonly CommonApi _api;
 
-    public CommonServiceImpl(String basePath)
+    public CommonServiceImpl(string basePath)
     {
-        this._api = new CommonApi(basePath);
+        _api = new CommonApi(basePath);
     }
-    
+
     public GetNonceResponse GetNonce(string address)
     {
         return _api.CommonControllerGetNonce(address);

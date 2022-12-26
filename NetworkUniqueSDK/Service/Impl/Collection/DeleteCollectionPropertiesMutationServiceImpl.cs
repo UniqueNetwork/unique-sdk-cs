@@ -1,24 +1,20 @@
 ﻿using Network.Unique.API.Api;
 using Network.Unique.API.Model;
-using Network.Unique.SDK.Signer;
 
 namespace Network.Unique.SDK.Service.Impl.Collection;
 
 public class DeleteCollectionPropertiesMutationServiceImpl : MutationService<DeleteCollectionPropertiesBody>
 {
-    private SignerWrapper _signerWrapper;
-    private CollectionsApi _api;
+    private readonly CollectionsApi _api;
 
-    public DeleteCollectionPropertiesMutationServiceImpl(SignerWrapper signerWrapper, CollectionsApi api)
+    public DeleteCollectionPropertiesMutationServiceImpl(CollectionsApi api)
     {
-        this._signerWrapper = signerWrapper;
-        this._api = api;
+        _api = api;
     }
 
-    public DeleteCollectionPropertiesMutationServiceImpl(SignerWrapper signerWrapper, string basePath)
+    public DeleteCollectionPropertiesMutationServiceImpl(string basePath)
     {
-        this._signerWrapper = signerWrapper;
-        this._api = new CollectionsApi(basePath);
+        _api = new CollectionsApi(basePath);
     }
 
     public override UnsignedTxPayloadResponse Build(DeleteCollectionPropertiesBody args)
@@ -63,7 +59,7 @@ public class DeleteCollectionPropertiesMutationServiceImpl : MutationService<Del
 
     public override SubmitTxBody Sign(UnsignedTxPayloadResponse args)
     {
-        var signature = _signerWrapper.Sign(args.SignerPayloadRaw.Data);
+        var signature = UniqueSdk.SignerWrapper.Sign(args.SignerPayloadRaw.Data);
         return new SubmitTxBody(args.SignerPayloadJSON, signature);
     }
 

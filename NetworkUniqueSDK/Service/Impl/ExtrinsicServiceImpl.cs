@@ -1,18 +1,15 @@
 ﻿using Network.Unique.API.Api;
 using Network.Unique.API.Model;
-using Network.Unique.SDK.Signer;
 
 namespace Network.Unique.SDK.Service.Impl;
 
 public class ExtrinsicServiceImpl : IExtrinsicService
 {
-    private ExtrinsicApi _api;
-    private SignerWrapper _signerWrapper;
+    private readonly ExtrinsicApi _api;
 
-    public ExtrinsicServiceImpl(SignerWrapper signerWrapper, string basePath)
+    public ExtrinsicServiceImpl(string basePath)
     {
-        this._api = new ExtrinsicApi(basePath);
-        this._signerWrapper = signerWrapper;
+        _api = new ExtrinsicApi(basePath);
     }
 
     public UnsignedTxPayloadResponse BuildTx(TxBuildBody body)
@@ -22,7 +19,7 @@ public class ExtrinsicServiceImpl : IExtrinsicService
 
     public SignTxResultResponse SignTx(UnsignedTxPayloadBody body, string seed)
     {
-        var signature = _signerWrapper.Sign(body.SignerPayloadRaw.Data);
+        var signature = UniqueSdk.SignerWrapper.Sign(body.SignerPayloadRaw.Data);
         return new SignTxResultResponse(signature, SignTxResultResponse.SignatureTypeEnum.Sr25519);
     }
 

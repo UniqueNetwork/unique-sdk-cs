@@ -1,24 +1,20 @@
 ﻿using Network.Unique.API.Api;
 using Network.Unique.API.Model;
-using Network.Unique.SDK.Signer;
 
 namespace Network.Unique.SDK.Service.Impl.Collection;
 
 public class EvmSendServiceImpl : MutationService<EvmSendArgumentsDto>
 {
-    private SignerWrapper _signerWrapper;
-    private EvmApi _api;
+    private readonly EvmApi _api;
 
-    public EvmSendServiceImpl(SignerWrapper signerWrapper, EvmApi api)
+    public EvmSendServiceImpl(EvmApi api)
     {
-        this._signerWrapper = signerWrapper;
-        this._api = api;
+        _api = api;
     }
 
-    public EvmSendServiceImpl(SignerWrapper signerWrapper, string basePath)
+    public EvmSendServiceImpl(string basePath)
     {
-        this._signerWrapper = signerWrapper;
-        this._api = new EvmApi(basePath);
+        _api = new EvmApi(basePath);
     }
 
     public override UnsignedTxPayloadResponse Build(EvmSendArgumentsDto args)
@@ -63,7 +59,7 @@ public class EvmSendServiceImpl : MutationService<EvmSendArgumentsDto>
 
     public override SubmitTxBody Sign(UnsignedTxPayloadResponse args)
     {
-        var signature = _signerWrapper.Sign(args.SignerPayloadRaw.Data);
+        var signature = UniqueSdk.SignerWrapper.Sign(args.SignerPayloadRaw.Data);
         return new SubmitTxBody(args.SignerPayloadJSON, signature);
     }
 

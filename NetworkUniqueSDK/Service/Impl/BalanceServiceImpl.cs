@@ -1,20 +1,18 @@
 ﻿using Network.Unique.API.Api;
 using Network.Unique.API.Model;
 using Network.Unique.SDK.Service.Impl.Balance;
-using Network.Unique.SDK.Signer;
 
 namespace Network.Unique.SDK.Service.Impl;
 
 public class BalanceServiceImpl : IBalanceService
 {
+    private readonly BalanceApi _api;
+    private readonly MutationService<BalanceTransferBody> _balanceTransferService;
 
-    private BalanceApi _api;
-    private MutationService<BalanceTransferBody> _balanceTransferService;
-
-    public BalanceServiceImpl(SignerWrapper signerWrapper, String basePath)
+    public BalanceServiceImpl(string basePath)
     {
-        this._api = new BalanceApi(basePath);
-        this._balanceTransferService = new BalanceTransferMutationServiceImpl(signerWrapper, _api);
+        _api = new BalanceApi(basePath);
+        _balanceTransferService = new BalanceTransferMutationServiceImpl(_api);
     }
 
     public AllBalancesResponse GetBalance(string address)

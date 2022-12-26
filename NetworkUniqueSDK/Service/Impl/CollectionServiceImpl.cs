@@ -1,52 +1,51 @@
 ﻿using Network.Unique.API.Api;
 using Network.Unique.API.Model;
 using Network.Unique.SDK.Service.Impl.Collection;
-using Network.Unique.SDK.Signer;
 
 namespace Network.Unique.SDK.Service.Impl;
 
 public class CollectionServiceImpl : ICollectionService
 {
-    
-    private CollectionsApi _api;
-    private MutationService<AddCollectionAdminBody> _addCollectionAdmin;
-    private MutationService<AddToAllowListBody> _addToAllowList;
-    private MutationService<ConfirmSponsorshipBody> _confirmSponsorship;
-    private MutationService<CreateCollectionBody> _createCollection;
-    private MutationService<DeleteCollectionPropertiesBody> _deleteCollectionProperties;
-    private MutationService<DestroyCollectionBody> _destroyCollection;
-    private MutationService<RemoveCollectionAdminBody> _removeCollectionAdmin;
-    private MutationService<RemoveFromAllowListBody> _removeFromAllowList;
-    private MutationService<RemoveSponsorshipBody> _removeSponsorship;
-    private MutationService<SetCollectionLimitsBody> _setCollectionLimits;
-    private MutationService<SetCollectionPermissionsBody> _setCollectionPermissions;
-    private MutationService<SetCollectionPropertiesBody> _setCollectionProperties;
-    private MutationService<SetPropertyPermissionsBody> _setPropertyPermissions;
-    private MutationService<SetSponsorshipBody> _setSponsorship;
-    private MutationService<SetTransfersEnabledBody> _setTransfersEnabled;
-    private MutationService<TransferCollectionBody> _transferCollection;
+    private readonly MutationService<AddCollectionAdminBody> _addCollectionAdmin;
+    private readonly MutationService<AddToAllowListBody> _addToAllowList;
 
-    public CollectionServiceImpl(SignerWrapper signerWrapper, String basePath)
+    private readonly CollectionsApi _api;
+    private readonly MutationService<ConfirmSponsorshipBody> _confirmSponsorship;
+    private readonly MutationService<CreateCollectionBody> _createCollection;
+    private readonly MutationService<DeleteCollectionPropertiesBody> _deleteCollectionProperties;
+    private readonly MutationService<DestroyCollectionBody> _destroyCollection;
+    private readonly MutationService<RemoveCollectionAdminBody> _removeCollectionAdmin;
+    private readonly MutationService<RemoveFromAllowListBody> _removeFromAllowList;
+    private readonly MutationService<RemoveSponsorshipBody> _removeSponsorship;
+    private readonly MutationService<SetCollectionLimitsBody> _setCollectionLimits;
+    private readonly MutationService<SetCollectionPermissionsBody> _setCollectionPermissions;
+    private readonly MutationService<SetCollectionPropertiesBody> _setCollectionProperties;
+    private readonly MutationService<SetPropertyPermissionsBody> _setPropertyPermissions;
+    private readonly MutationService<SetSponsorshipBody> _setSponsorship;
+    private readonly MutationService<SetTransfersEnabledBody> _setTransfersEnabled;
+    private readonly MutationService<TransferCollectionBody> _transferCollection;
+
+    public CollectionServiceImpl(string basePath)
     {
-        this._api = new CollectionsApi(basePath);
-        this._addCollectionAdmin = new AddCollectionAdminMutationServiceImpl(signerWrapper, _api);
-        this._addToAllowList = new AddToAllowListMutationServiceImpl(signerWrapper, _api);
-        this._confirmSponsorship = new ConfirmSponsorshipMutationServiceImpl(signerWrapper, _api);
-        this._createCollection = new CreateCollectionMutationMutationServiceImpl(signerWrapper, _api);
-        this._deleteCollectionProperties = new DeleteCollectionPropertiesMutationServiceImpl(signerWrapper, _api);
-        this._destroyCollection = new DestroyMutationServiceImpl(signerWrapper, _api);
-        this._removeCollectionAdmin = new RemoveAdminMutationServiceImpl(signerWrapper, _api);
-        this._removeFromAllowList = new RemoveFromAllowListMutationServiceImpl(signerWrapper, _api);
-        this._removeSponsorship = new RemoveSponsorshipMutationServiceImpl(signerWrapper, _api);
-        this._setCollectionLimits = new SetCollectionLimitsMutationServiceImpl(signerWrapper, _api);
-        this._setCollectionPermissions = new SetPermissionsMutationServiceImpl(signerWrapper, _api);
-        this._setCollectionProperties = new SetCollectionPropertiesMutationServiceImpl(signerWrapper, _api);
-        this._setPropertyPermissions = new SetPropertyPermissionsMutationServiceImpl(signerWrapper, _api);
-        this._setSponsorship = new SetSponsorshipMutationServiceImpl(signerWrapper, _api);
-        this._setTransfersEnabled = new SetTransfersEnabledMutationServiceImpl(signerWrapper, _api);
-        this._transferCollection = new TransferMutationServiceImpl(signerWrapper, _api);
+        _api = new CollectionsApi(basePath);
+        _addCollectionAdmin = new AddCollectionAdminMutationServiceImpl(_api);
+        _addToAllowList = new AddToAllowListMutationServiceImpl(_api);
+        _confirmSponsorship = new ConfirmSponsorshipMutationServiceImpl(_api);
+        _createCollection = new CreateCollectionMutationMutationServiceImpl(_api);
+        _deleteCollectionProperties = new DeleteCollectionPropertiesMutationServiceImpl(_api);
+        _destroyCollection = new DestroyMutationServiceImpl(_api);
+        _removeCollectionAdmin = new RemoveAdminMutationServiceImpl(_api);
+        _removeFromAllowList = new RemoveFromAllowListMutationServiceImpl(_api);
+        _removeSponsorship = new RemoveSponsorshipMutationServiceImpl(_api);
+        _setCollectionLimits = new SetCollectionLimitsMutationServiceImpl(_api);
+        _setCollectionPermissions = new SetPermissionsMutationServiceImpl(_api);
+        _setCollectionProperties = new SetCollectionPropertiesMutationServiceImpl(_api);
+        _setPropertyPermissions = new SetPropertyPermissionsMutationServiceImpl(_api);
+        _setSponsorship = new SetSponsorshipMutationServiceImpl(_api);
+        _setTransfersEnabled = new SetTransfersEnabledMutationServiceImpl(_api);
+        _transferCollection = new TransferMutationServiceImpl(_api);
     }
-    
+
     public CollectionInfoWithSchemaResponse GetCollections(decimal collectionId, string at)
     {
         return _api.CollectionControllerGetCollection(collectionId, at);
@@ -72,12 +71,14 @@ public class CollectionServiceImpl : ICollectionService
         return _api.CollectionControllerCollectionTokens(collectionId, at);
     }
 
-    public PropertyPermissionsResponse GetCollectionPropertyPermissions(decimal collectionId, List<string> propertyKeys, string at)
+    public PropertyPermissionsResponse GetCollectionPropertyPermissions(decimal collectionId, List<string> propertyKeys,
+        string at)
     {
         return _api.CollectionControllerPropertyPermissions(collectionId, propertyKeys, at);
     }
 
-    public NextSponsoredResponse GetCollectionNextSponsored(decimal collectionId, string address, decimal tokenId, string at)
+    public NextSponsoredResponse GetCollectionNextSponsored(decimal collectionId, string address, decimal tokenId,
+        string at)
     {
         return _api.CollectionControllerNextSponsored(collectionId, address, tokenId, at);
     }

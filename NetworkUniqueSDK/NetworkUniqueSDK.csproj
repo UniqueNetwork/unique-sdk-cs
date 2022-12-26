@@ -9,6 +9,11 @@
         <LangVersion>10</LangVersion>
         <Title>Network Unique SDK C#</Title>
         <PackageProjectUrl>https://github.com/UniqueNetwork/unique-sdk-cs</PackageProjectUrl>
+        <Description>SDK C# For Unique Network</Description>
+        <Copyright>Nikolai Pasynkov</Copyright>
+        <PackageLicenseUrl>https://github.com/UniqueNetwork/unique-sdk-cs/blob/master/LICENSE.md</PackageLicenseUrl>
+        <RepositoryUrl>https://github.com/UniqueNetwork/unique-sdk-cs</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
     </PropertyGroup>
 
     <ItemGroup>

@@ -1,26 +1,25 @@
 ﻿using Network.Unique.API.Api;
 using Network.Unique.API.Model;
 using Network.Unique.SDK.Service.Impl.Collection;
-using Network.Unique.SDK.Signer;
 
 namespace Network.Unique.SDK.Service.Impl;
 
 public class FungibleServiceImpl : IFungibleService
 {
-    
-    private FungibleApi _api;
-    private MutationService<AddTokensArgsDto> _addTokens;
-    private MutationService<CreateFungibleCollectionRequest> _createFungibleCollection;
-    private MutationService<TransferTokensArgsDto> _transferTokens;
+    private readonly MutationService<AddTokensArgsDto> _addTokens;
 
-    public FungibleServiceImpl(SignerWrapper signerWrapper, String basePath)
+    private readonly FungibleApi _api;
+    private readonly MutationService<CreateFungibleCollectionRequest> _createFungibleCollection;
+    private readonly MutationService<TransferTokensArgsDto> _transferTokens;
+
+    public FungibleServiceImpl(string basePath)
     {
-        this._api = new FungibleApi(basePath);
-        this._addTokens = new AddTokensMutationServiceImpl(signerWrapper, _api);
-        this._createFungibleCollection = new CreateFungibleCollectionMutationServiceImpl(signerWrapper, _api);
-        this._transferTokens = new TransferTokensMutationServiceImpl(signerWrapper, _api);
+        _api = new FungibleApi(basePath);
+        _addTokens = new AddTokensMutationServiceImpl(_api);
+        _createFungibleCollection = new CreateFungibleCollectionMutationServiceImpl(_api);
+        _transferTokens = new TransferTokensMutationServiceImpl(_api);
     }
-    
+
     public FungibleCollectionInfoDto GetFungibleCollectionInfo(decimal collectionId, string at)
     {
         return _api.FungibleControllerGetCollection(collectionId, at);

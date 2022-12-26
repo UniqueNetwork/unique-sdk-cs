@@ -1,24 +1,20 @@
 ﻿using Network.Unique.API.Api;
 using Network.Unique.API.Model;
-using Network.Unique.SDK.Signer;
 
 namespace Network.Unique.SDK.Service.Impl.Balance;
 
 public class BalanceTransferMutationServiceImpl : MutationService<BalanceTransferBody>
 {
-    private SignerWrapper _signerWrapper;
-    private BalanceApi _api;
+    private readonly BalanceApi _api;
 
-    public BalanceTransferMutationServiceImpl(SignerWrapper signerWrapper, BalanceApi api)
+    public BalanceTransferMutationServiceImpl(BalanceApi api)
     {
-        this._signerWrapper = signerWrapper;
-        this._api = api;
+        _api = api;
     }
 
-    public BalanceTransferMutationServiceImpl(SignerWrapper signerWrapper, string basePath)
+    public BalanceTransferMutationServiceImpl(string basePath)
     {
-        this._signerWrapper = signerWrapper;
-        this._api = new BalanceApi(basePath);
+        _api = new BalanceApi(basePath);
     }
 
     public override UnsignedTxPayloadResponse Build(BalanceTransferBody args)
@@ -63,7 +59,7 @@ public class BalanceTransferMutationServiceImpl : MutationService<BalanceTransfe
 
     public override SubmitTxBody Sign(UnsignedTxPayloadResponse args)
     {
-        var signature = _signerWrapper.Sign(args.SignerPayloadRaw.Data);
+        var signature = UniqueSdk.SignerWrapper.Sign(args.SignerPayloadRaw.Data);
         return new SubmitTxBody(args.SignerPayloadJSON, signature);
     }
 
