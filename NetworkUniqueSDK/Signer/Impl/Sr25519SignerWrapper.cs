@@ -1,4 +1,5 @@
-﻿using Network.Unique.API.Model;
+﻿using System.Text.Json;
+using Network.Unique.API.Model;
 using Network.Unique.SDK.Service;
 
 namespace Network.Unique.SDK.Signer.Impl;
@@ -6,21 +7,28 @@ namespace Network.Unique.SDK.Signer.Impl;
 public class Sr25519SignerWrapper : SignerWrapper
 {
 
-    private string _suri;
-    private string _password;
+    private IntPtr _handle;
 
-    public Sr25519SignerWrapper(string suri, string password)
+    public Sr25519SignerWrapper(string suri, string password, bool generate)
     {
-        _suri = suri;
-        _password = password;
+        if (generate)
+        {
+            string pairStr = Pair.Generate(CryptoScheme.Sr25519, password);
+            NativePairWrapper? pairInfo = 
+                JsonSerializer.Deserialize<NativePairWrapper>(pairStr);
+
+            _handle = Pair.InitSuri(CryptoScheme.Sr25519, pairInfo.secretSeed, password);
+        } else
+        {
+            Pair.InitSuri(CryptoScheme.Sr25519, suri, password);
+        }
     }
 
     public override string Sign(string data)
     {
-        var pointer = Pair.InitSuri(CryptoScheme.Sr25519, _suri, _password);
         var payload = ToByteArray(data);
         
-        var bytes = Pair.Sign(pointer.ToInt64(), payload);
+        var bytes = Pair.Sign(_handle.ToInt64(), payload);
         return "0x01" + BitConverter.ToString(bytes).Replace("-","");
     }
 }

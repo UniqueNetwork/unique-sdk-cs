@@ -22,8 +22,12 @@ https://www.nuget.org/packages/Network.Unique.API
 First of all, create Signer and SDK Object
 
 ```csharp
-// Create signer with mnemonic or seed as first parameter, password as second paramete
-Sr25519SignerWrapper signerWrapper = new Sr25519SignerWrapper(suri, suriPassword);
+// Create signer from suri and password
+Sr25519SignerWrapper signerWrapper = new Sr25519SignerWrapper(suri, suriPassword, false);
+// Or generate signer with password
+Sr25519SignerWrapper signerWrapper = new Sr25519SignerWrapper(null, suriPassword, true);
+// Or generate signer without password
+Sr25519SignerWrapper signerWrapper = new Sr25519SignerWrapper(null, null, true);
 
 // create SDK god object. First parameter - base url of backend of blockchain
 UniqueSdk uniqueSdk = new UniqueSdk("https://rest.opal.uniquenetwork.dev");
