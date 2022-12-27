@@ -39,11 +39,11 @@ public class Pair
     }
     
     [DllImport(NativeLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "csharp_pair_generate")]
-    internal static extern IntPtr theme_song_generate(string? password);
+    internal static extern IntPtr theme_song_generate(int ordinalCryptoScheme, string? password);
 
-    public static string Generate(string? password)
+    public static string Generate(CryptoScheme cryptoScheme, string? password)
     {
-        IntPtr startPointer = theme_song_generate(password);
+        IntPtr startPointer = theme_song_generate((int) cryptoScheme, password);
         int len = 0;
         while (Marshal.ReadByte(startPointer, len) != 0) { ++len; }
         byte[] buffer = new byte[len];

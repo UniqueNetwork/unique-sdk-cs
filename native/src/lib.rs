@@ -165,12 +165,16 @@ fn generate<P: Pair>(password: *const c_char) -> Result<String>
         P: sp_core::Pair,
         P::Public: Into<MultiSigner>,
 {
-    let password = unsafe { CStr::from_ptr(password) };
-    let password = password
-        .to_str()
-        .ok();
+    let pass;
+    if !password.is_null() {
+        unsafe {
+            pass = Some(CStr::from_ptr(password).to_str().unwrap());
+        }
+    } else {
+        pass = None;
+    };
 
-    let (pair, phrase, seed) = P::generate_with_phrase(password);
+    let (pair, phrase, seed) = P::generate_with_phrase(pass);
     let public_key = pair.public();
     let network_override = default_ss58_version();
 
