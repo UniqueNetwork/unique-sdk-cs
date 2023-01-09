@@ -40,7 +40,7 @@ Signer has ```sign``` function for payload signing. When you using ```UniqueSdk`
 
 After we can use inner services of SDK
 
-```kotlin
+```csharp
 // Getting balance service for balance reading or manipulation
 IBalanceService balanceService = uniqueSdk.BalanceService;
 ```
@@ -48,7 +48,7 @@ IBalanceService balanceService = uniqueSdk.BalanceService;
 Some methods of service can be used with many parameters based on template, which we named ```Mutation```.
 One of these mutations is balance transfering.
 
-```kotlin
+```csharp
 /// Getting balance transfering mutation
 MutationService<BalanceTransferBody> transferMutationService = balanceService.GetTransferMutationService();
 ```
@@ -92,6 +92,48 @@ After all executions we can see transaction hash
 
 ```csharp
 Console.WriteLine(submitResponse.Hash);
+```
+
+### Collection creating example
+
+```csharp
+var collectionService = sdk.CollectionService;
+var createCollection = collectionService.GetCreateCollection();
+
+var request = new CreateCollectionBody(
+    CreateCollectionBody.ModeEnum.NFT,
+    "Sample collection name",
+    "sample collection description",
+    "TEST",
+    null,
+    null,
+    CreateCollectionBody.MetaUpdatePermissionEnum.ItemOwner,
+    new CollectionPermissionsDto(
+        CollectionPermissionsDto.AccessEnum.Normal,
+        true,
+        new CollectionNestingPermissionsDto(
+            true,
+            true
+        )
+    ),
+    true,
+    "5DnUE1uV7iW25bUriWVPHY67KMm2t6g5v23GzVbZCUc8fyBD"
+);
+var createCollectionResponse = createCollection.Build(request);
+
+var signCollectionBody = new UnsignedTxPayloadResponse(
+    createCollectionResponse.SignerPayloadJSON,
+    createCollectionResponse.SignerPayloadRaw,
+    createCollectionResponse.SignerPayloadHex
+);
+var signCollectionResponse = createCollection.Sign(signCollectionBody);
+
+var submitCollectionBody = new SubmitTxBody(signCollectionResponse.SignerPayloadJSON, signCollectionResponse.Signature);
+var submitCollectionResponse = createCollection.SubmitWatch(submitCollectionBody);
+var collectionExtrinsic = extrinsicService.GetExtrinsicStatus(submitCollectionResponse.Hash);
+
+Console.WriteLine(submitCollectionResponse.Hash);
+Console.WriteLine(collectionExtrinsic);
 ```
 
 ## Contributing
